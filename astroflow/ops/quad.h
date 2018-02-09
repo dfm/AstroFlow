@@ -15,17 +15,19 @@
 
 namespace astroflow {
 
+  using std::abs;
+
 #define ELLINT_CONV_TOL 1.0e-8
 #define ELLINT_MAX_ITER 200
 
   // K: 1.0 - k^2 >= 0.0
   template <typename T>
   T ellint_1 (const T& k) {
-    T kc = std::sqrt(1.0 - k * k), m = T(1.0), h;
+    T kc = sqrt(1.0 - k * k), m = T(1.0), h;
     for (int i = 0; i < ELLINT_MAX_ITER; ++i) {
       h = m;
       m += kc;
-      if (std::abs(h - kc) / h <= ELLINT_CONV_TOL) break;
+      if (abs(h - kc) / h <= ELLINT_CONV_TOL) break;
       kc = sqrt(h * kc);
       m *= 0.5;
     }
@@ -35,15 +37,15 @@ namespace astroflow {
   // E: 1.0 - k^2 >= 0.0
   template <typename T>
   T ellint_2 (const T& k) {
-    T b = 1.0 - k * k, kc = std::sqrt(b), m = T(1.0), c = T(1.0), a = b + 1.0, m0;
+    T b = 1.0 - k * k, kc = sqrt(b), m = T(1.0), c = T(1.0), a = b + 1.0, m0;
     for (int i = 0; i < ELLINT_MAX_ITER; ++i) {
       b = 2.0 * (c * kc + b);
       c = a;
       m0 = m;
       m += kc;
       a += b / m;
-      if (std::abs(m0 - kc) / m0 <= ELLINT_CONV_TOL) break;
-      kc = 2.0 * std::sqrt(kc * m0);
+      if (abs(m0 - kc) / m0 <= ELLINT_CONV_TOL) break;
+      kc = 2.0 * sqrt(kc * m0);
     }
     return M_PI_4 * a / m;
   }
@@ -51,7 +53,7 @@ namespace astroflow {
   // Pi: 1.0 - k^2 >= 0.0 & 0.0 <= n < 1.0 (doesn't seem consistent for n < 0.0)
   template <typename T>
   T ellint_3 (const T& k, const T& n) {
-    T kc = std::sqrt(1.0 - k * k), p = std::sqrt(1.0 - n), m0 = 1.0, c = 1.0, d = 1.0 / p, e = kc, f, g;
+    T kc = sqrt(1.0 - k * k), p = sqrt(1.0 - n), m0 = 1.0, c = 1.0, d = 1.0 / p, e = kc, f, g;
     for (int i = 0; i < ELLINT_MAX_ITER; ++i) {
       f = c;
       c += d / p;
@@ -60,7 +62,7 @@ namespace astroflow {
       p = g + p;
       g = m0;
       m0 = kc + m0;
-      if (std::abs(1.0 - kc / g) <= ELLINT_CONV_TOL) break;
+      if (abs(1.0 - kc / g) <= ELLINT_CONV_TOL) break;
       kc = 2.0 * sqrt(e);
       e = kc * m0;
     }
@@ -118,31 +120,31 @@ namespace astroflow {
 #define PAL_AB  T a = (p-z)*(p-z), \
                   b = (p+z)*(p+z);
 
-#define PAL_K   T k0=std::acos((p2+z2-1.0)/(2.0*p*z)), \
-                  k1=std::acos((1.0+z2-p2)/(2.0*z));
+#define PAL_K   T k0=acos((p2+z2-1.0)/(2.0*p*z)), \
+                  k1=acos((1.0+z2-p2)/(2.0*z));
 
-#define PAL_CI  T ci = 2.0/(9.0*M_PI*std::sqrt(1.0-a)), \
+#define PAL_CI  T ci = 2.0/(9.0*M_PI*sqrt(1.0-a)), \
                   cik = (1.0-5.0*z2+p2+a*b), \
                   cie = (z2+7.0*p2-4.0)*(1.0-a), \
                   cip = -3.0*(p+z)/(p-z); \
                 fk = ci*cik; fe = ci*cie; fp = ci*cip; \
                 kk = ee = pp = 1; \
-                k = std::sqrt(4.0*z*p/(1.0-a)); \
+                k = sqrt(4.0*z*p/(1.0-a)); \
                 n = (a-b)/a; \
                 f0 = p2; \
                 f2 = 0.5*f0*(f0+2.0*z2);
 
 #define PAL_CG  PAL_K \
-                T cg = 1.0/(9.0*M_PI*std::sqrt(p*z)), \
+                T cg = 1.0/(9.0*M_PI*sqrt(p*z)), \
                   cgk = ((1.0-b)*(2.0*b+a-3.0)-3.0*(p+z)*(p-z)*(b-2.0)), \
                   cge = 4.0*p*z*(z2+7.0*p2-4.0), \
                   cgp = -3.0*(p+z)/(p-z); \
                 fk = cg*cgk; fe = cg*cge; fp = cg*cgp; \
                 kk = ee = pp = 1; \
-                k = std::sqrt((1.0-a)/(4.0*p*z)); \
+                k = sqrt((1.0-a)/(4.0*p*z)); \
                 n = (a-1.0)/a; \
-                f0 = (p2*k0+k1-std::sqrt(z2-0.25*(1.0+z2-p2)*(1.0+z2-p2)))/M_PI; \
-                f2 = (k1+p2*(p2+2.0*z2)*k0-0.25*(1.0+5.0*p2+z2)*std::sqrt((1.0-a)*(b-1.0)))/(2.0*M_PI);
+                f0 = (p2*k0+k1-sqrt(z2-0.25*(1.0+z2-p2)*(1.0+z2-p2)))/M_PI; \
+                f2 = (k1+p2*(p2+2.0*z2)*k0-0.25*(1.0+5.0*p2+z2)*sqrt((1.0-a)*(b-1.0)))/(2.0*M_PI);
 
   template <typename T>
   T quad (const T& u1, const T& u2, const T& p, const T& z0)
@@ -150,7 +152,7 @@ namespace astroflow {
     int kk = 0, ee = 0, pp = 0;
     T eps = std::numeric_limits<T>::epsilon();
 
-    T z = std::abs(z0);
+    T z = abs(z0);
     if (z + p >= 1.0) return T(1.0);
 
     T w0, w1, w2,
@@ -181,7 +183,7 @@ namespace astroflow {
       // M&A 9, Pal B
       PAL_AB PAL_CI
         f1 = T(2.0/3.0);
-    } else if (z < p && std::abs(z-1.0+p) <= eps) {
+    } else if (z < p && abs(z-1.0+p) <= eps) {
       // M&A -, Pal B_T
       f0 = p2;
       f1 = (2.0/(3.0*M_PI)*acos(1.0-2.0*p)-4.0/(9.0*M_PI)
@@ -191,7 +193,7 @@ namespace astroflow {
       // M&A 8, Pal B_G
       PAL_AB PAL_CG
         f1 = T(2.0/3.0);
-    } else if (std::abs(z-p) <= eps && z < 1.0-p-eps) {
+    } else if (abs(z-p) <= eps && z < 1.0-p-eps) {
       // M&A 5, Pal C
       T t = T(2.0/(9.0*M_PI));
       f0 = p2;
@@ -200,12 +202,12 @@ namespace astroflow {
       fe = t*4.0*(2.0*f0-1.0); ee = 1;
       f2 = 1.5*f0*f0;
       k = 2.0*p;
-    } else if (std::abs(z-p) <= eps && std::abs(z-1.0+p) <= eps) {
+    } else if (abs(z-p) <= eps && abs(z-1.0+p) <= eps) {
       // M&A 6, Pal C_T
       f0 = T(0.25);
       f1 = T(1.0/3.0-4.0/(9.0*M_PI));
       f2 = T(3.0/32.0);
-    } else if (std::abs(z-p) <= eps) {
+    } else if (abs(z-p) <= eps) {
       // M&A 7, Pal C_G
       PAL_AB PAL_K
         f0 = (p2*k0+k1-sqrt(z2-0.25*(1.0+z2-p2)*(1.0+z2-p2)))/M_PI;
@@ -217,7 +219,7 @@ namespace astroflow {
     } else if (z < 1.0-p-eps) {
       // M&A 3, Pal D
       PAL_AB PAL_CI
-    } else if (std::abs(z-1.0+p) <= eps) {
+    } else if (abs(z-1.0+p) <= eps) {
       // M&A 4, Pal E
       f0 = p2;
       f1 = (2.0/(3.0*M_PI)*acos(1.0-2.0*p)-4.0/(9.0*M_PI)
@@ -236,8 +238,10 @@ namespace astroflow {
       df += w1 * fk * ellint_1(k);
     if (ee && fe != 0.0)
       df += w1 * fe * ellint_2(k);
-    if (pp && fp != 0.0)
-      df += w1 * fp * ellint_3(-k, n);
+    if (pp && fp != 0.0) {
+      k *= -1.0;
+      df += w1 * fp * ellint_3(k, n);
+    }
 
     return 1.0 - df;
   }

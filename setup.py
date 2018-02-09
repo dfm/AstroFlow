@@ -72,8 +72,6 @@ class build_ext(_build_ext):
                 include_dirs[-1], "external", "nsync", "public"))
             library_dirs += [tf.sysconfig.get_lib()]
 
-        # include_dirs += ["/usr/local/include/eigen3"]
-
         # Update the extension
         ext.include_dirs += include_dirs
         ext.library_dirs += library_dirs
@@ -91,6 +89,7 @@ extensions = [
             os.path.join("astroflow", "ops", "kepler_op.cc"),
             os.path.join("astroflow", "ops", "searchsorted_op.cc"),
             os.path.join("astroflow", "ops", "quad_limb_darkening_op.cc"),
+            os.path.join("astroflow", "ops", "quad_limb_darkening_rev_op.cc"),
         ],
         language="c++",
     ),
