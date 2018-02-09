@@ -2,9 +2,7 @@
 
 import os
 import sys
-import tempfile
 
-import setuptools
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
 
@@ -64,5 +62,4 @@ setup(
     packages=["astroflow"],
     ext_modules=extensions,
     cmdclass=dict(build_ext=build_ext),
-    zip_safe=True,
 )
